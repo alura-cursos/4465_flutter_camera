@@ -1,3 +1,4 @@
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'view_model/registration_viewmodel.dart';
@@ -169,6 +170,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     RegistrationViewModel viewModel, {
     bool isDocument = true,
   }) async {
+    List<CameraDescription> listCameras = await availableCameras();
+    print(listCameras);
+    print(listCameras.toString().replaceAll("),", "),\n"));
     if (isDocument) {
       // TODO: Abrir câmera para fotografar documento
     } else {
