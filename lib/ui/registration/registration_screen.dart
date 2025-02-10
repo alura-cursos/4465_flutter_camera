@@ -1,5 +1,6 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_banco_douro/ui/registration/widgets/denied_camera_permission_dialog.dart';
 import 'package:flutter_banco_douro/ui/registration/widgets/request_camera_permission_dialog.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
@@ -202,11 +203,15 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         cameraPermissionStatus = newStatus;
       }
     }
+    print(cameraPermissionStatus);
 
     if (cameraPermissionStatus != PermissionStatus.denied &&
         cameraPermissionStatus != PermissionStatus.permanentlyDenied) {
       await cameraController!.initialize();
       setState(() {});
+    } else if (cameraPermissionStatus == PermissionStatus.permanentlyDenied) {
+      if (!context.mounted) return;
+      await showDeniedCameraPermissionDialog(context);
     }
 
     // if (isDocument) {
