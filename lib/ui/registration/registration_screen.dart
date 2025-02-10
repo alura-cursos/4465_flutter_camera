@@ -14,6 +14,7 @@ class RegistrationScreen extends StatefulWidget {
 class _RegistrationScreenState extends State<RegistrationScreen> {
   final _formKey = GlobalKey<FormState>();
   String _selectedDocumentType = "CNH"; // Valor inicial do dropdown
+  CameraController? cameraController;
 
   @override
   Widget build(BuildContext context) {
@@ -133,21 +134,30 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     return Column(
       spacing: 8,
       children: [
-        Container(
-          width: 150,
+        SizedBox(
           height: 200,
-          color: Colors.grey.shade200,
           child: AnimatedSwitcher(
             duration: const Duration(milliseconds: 750),
-            child: (!isDocument && viewModel.imageSelfie != null)
-                ? Image.memory(viewModel.imageSelfie!)
-                : (isDocument && viewModel.imageDocument != null)
-                    ? Image.memory(viewModel.imageDocument!)
-                    : Icon(
-                        icon,
-                        size: 48,
-                        color: Colors.grey.shade600,
-                      ),
+            child: (cameraController != null &&
+                    cameraController!.value.isInitialized)
+                ? CameraPreview(cameraController!)
+                : Container(
+                    width: 150,
+                    height: 200,
+                    color: Colors.grey.shade200,
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 750),
+                      child: (!isDocument && viewModel.imageSelfie != null)
+                          ? Image.memory(viewModel.imageSelfie!)
+                          : (isDocument && viewModel.imageDocument != null)
+                              ? Image.memory(viewModel.imageDocument!)
+                              : Icon(
+                                  icon,
+                                  size: 48,
+                                  color: Colors.grey.shade600,
+                                ),
+                    ),
+                  ),
           ),
         ),
         Column(
@@ -173,13 +183,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     List<CameraDescription> listCameras = await availableCameras();
     print(listCameras.toString().replaceAll("),", "),\n"));
 
-    CameraController cameraController = CameraController(
+    cameraController = CameraController(
       listCameras[1],
       ResolutionPreset.high,
       enableAudio: false,
     );
 
-    await cameraController.initialize();
+    await cameraController!.initialize();
+    setState(() {});
 
     // if (isDocument) {
     //   // TODO: Abrir câmera para fotografar documento
