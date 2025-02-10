@@ -1,5 +1,7 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_banco_douro/ui/registration/widgets/request_camera_permission_dialog.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'view_model/registration_viewmodel.dart';
 import 'widgets/form_field_widget.dart';
@@ -189,7 +191,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       enableAudio: false,
     );
 
-    await cameraController!.initialize();
+    PermissionStatus cameraPermissionStatus = await Permission.camera.status;
+
+    if (cameraPermissionStatus == PermissionStatus.denied) {
+      if (!context.mounted) return;
+      await showRequestCameraPermissionDialog(context);
+    }
+
+    // await cameraController!.initialize();
     setState(() {});
 
     // if (isDocument) {
