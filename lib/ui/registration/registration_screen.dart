@@ -171,12 +171,20 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     bool isDocument = true,
   }) async {
     List<CameraDescription> listCameras = await availableCameras();
-    print(listCameras);
     print(listCameras.toString().replaceAll("),", "),\n"));
-    if (isDocument) {
-      // TODO: Abrir câmera para fotografar documento
-    } else {
-      // TODO: Abrir câmera para fotografar selfie
-    }
+
+    CameraController cameraController = CameraController(
+      listCameras[1],
+      ResolutionPreset.high,
+      enableAudio: false,
+    );
+
+    await cameraController.initialize();
+
+    // if (isDocument) {
+    //   // TODO: Abrir câmera para fotografar documento
+    // } else {
+    //   // TODO: Abrir câmera para fotografar selfie
+    // }
   }
 }
