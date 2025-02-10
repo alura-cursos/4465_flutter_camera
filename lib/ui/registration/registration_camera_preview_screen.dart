@@ -1,5 +1,6 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class RegistrationCameraPreviewScreen extends StatefulWidget {
   final CameraDescription cameraDescription;
@@ -26,12 +27,17 @@ class _RegistrationCameraPreviewScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 750),
-        child:
-            (cameraController != null && cameraController!.value.isInitialized)
-                ? CameraPreview(cameraController!)
-                : const Center(child: CircularProgressIndicator()),
+      body: Center(
+        child: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 750),
+          child: (cameraController != null &&
+                  cameraController!.value.isInitialized)
+              ? AspectRatio(
+                  aspectRatio: 1 / cameraController!.value.aspectRatio,
+                  child: CameraPreview(cameraController!),
+                )
+              : const CircularProgressIndicator(),
+        ),
       ),
     );
   }
@@ -44,6 +50,25 @@ class _RegistrationCameraPreviewScreenState
     );
 
     await cameraController!.initialize();
+
+    switch (widget.cameraDescription.sensorOrientation) {
+      case 0:
+        cameraController!.lockCaptureOrientation(DeviceOrientation.portraitUp);
+        break;
+      case 90:
+        cameraController!
+            .lockCaptureOrientation(DeviceOrientation.landscapeRight);
+        break;
+      case 180:
+        cameraController!
+            .lockCaptureOrientation(DeviceOrientation.portraitDown);
+        break;
+      case 270:
+        cameraController!
+            .lockCaptureOrientation(DeviceOrientation.landscapeLeft);
+        break;
+    }
+
     setState(() {});
   }
 }
