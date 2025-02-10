@@ -1,5 +1,6 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_banco_douro/ui/registration/registration_camera_preview_screen.dart';
 import 'package:flutter_banco_douro/ui/registration/widgets/denied_camera_permission_dialog.dart';
 import 'package:flutter_banco_douro/ui/registration/widgets/request_camera_permission_dialog.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -17,7 +18,6 @@ class RegistrationScreen extends StatefulWidget {
 class _RegistrationScreenState extends State<RegistrationScreen> {
   final _formKey = GlobalKey<FormState>();
   String _selectedDocumentType = "CNH"; // Valor inicial do dropdown
-  CameraController? cameraController;
 
   @override
   Widget build(BuildContext context) {
@@ -137,30 +137,21 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     return Column(
       spacing: 8,
       children: [
-        SizedBox(
+        Container(
+          width: 150,
           height: 200,
+          color: Colors.grey.shade200,
           child: AnimatedSwitcher(
             duration: const Duration(milliseconds: 750),
-            child: (cameraController != null &&
-                    cameraController!.value.isInitialized)
-                ? CameraPreview(cameraController!)
-                : Container(
-                    width: 150,
-                    height: 200,
-                    color: Colors.grey.shade200,
-                    child: AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 750),
-                      child: (!isDocument && viewModel.imageSelfie != null)
-                          ? Image.memory(viewModel.imageSelfie!)
-                          : (isDocument && viewModel.imageDocument != null)
-                              ? Image.memory(viewModel.imageDocument!)
-                              : Icon(
-                                  icon,
-                                  size: 48,
-                                  color: Colors.grey.shade600,
-                                ),
-                    ),
-                  ),
+            child: (!isDocument && viewModel.imageSelfie != null)
+                ? Image.memory(viewModel.imageSelfie!)
+                : (isDocument && viewModel.imageDocument != null)
+                    ? Image.memory(viewModel.imageDocument!)
+                    : Icon(
+                        icon,
+                        size: 48,
+                        color: Colors.grey.shade600,
+                      ),
           ),
         ),
         Column(
@@ -186,12 +177,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     List<CameraDescription> listCameras = await availableCameras();
     print(listCameras.toString().replaceAll("),", "),\n"));
 
-    cameraController = CameraController(
-      listCameras[1],
-      ResolutionPreset.high,
-      enableAudio: false,
-    );
-
     PermissionStatus cameraPermissionStatus = await Permission.camera.status;
 
     if (cameraPermissionStatus == PermissionStatus.denied) {
@@ -207,8 +192,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
     if (cameraPermissionStatus != PermissionStatus.denied &&
         cameraPermissionStatus != PermissionStatus.permanentlyDenied) {
-      await cameraController!.initialize();
-      setState(() {});
+      if (!context.mounted) return;
+
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => RegistrationCameraPreviewScreen(
+                cameraDescription: listCameras[1]),
+          ));
     } else if (cameraPermissionStatus == PermissionStatus.permanentlyDenied) {
       if (!context.mounted) return;
       await showDeniedCameraPermissionDialog(context);
