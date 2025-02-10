@@ -195,11 +195,19 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
     if (cameraPermissionStatus == PermissionStatus.denied) {
       if (!context.mounted) return;
-      await showRequestCameraPermissionDialog(context);
+      PermissionStatus? newStatus =
+          await showRequestCameraPermissionDialog(context);
+
+      if (newStatus != null) {
+        cameraPermissionStatus = newStatus;
+      }
     }
 
-    // await cameraController!.initialize();
-    setState(() {});
+    if (cameraPermissionStatus != PermissionStatus.denied &&
+        cameraPermissionStatus != PermissionStatus.permanentlyDenied) {
+      await cameraController!.initialize();
+      setState(() {});
+    }
 
     // if (isDocument) {
     //   // TODO: Abrir câmera para fotografar documento
