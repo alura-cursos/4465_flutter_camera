@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_banco_douro/ui/registration/registration_camera_preview_screen.dart';
 import 'package:flutter_banco_douro/ui/registration/widgets/denied_camera_permission_dialog.dart';
 import 'package:flutter_banco_douro/ui/registration/widgets/request_camera_permission_dialog.dart';
+import 'package:flutter_banco_douro/utils/registration_capture_types.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'view_model/registration_viewmodel.dart';
@@ -193,22 +194,37 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     if (cameraPermissionStatus != PermissionStatus.denied &&
         cameraPermissionStatus != PermissionStatus.permanentlyDenied) {
       if (!context.mounted) return;
+      RegistrationCaptureTypes captureType = RegistrationCaptureTypes.selfie;
+      int indexCameraDescription = listCameras.indexWhere(
+        (element) => element.lensDirection == CameraLensDirection.front,
+      );
+
+      if (isDocument) {
+        if (_selectedDocumentType == "CNH") {
+          captureType = RegistrationCaptureTypes.cnh;
+        }
+
+        if (_selectedDocumentType == "RG") {
+          captureType = RegistrationCaptureTypes.rg;
+        }
+
+        indexCameraDescription = listCameras.indexWhere(
+          (element) => element.lensDirection == CameraLensDirection.back,
+        );
+      }
 
       Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => RegistrationCameraPreviewScreen(
-                cameraDescription: listCameras[1]),
-          ));
+        context,
+        MaterialPageRoute(
+          builder: (context) => RegistrationCameraPreviewScreen(
+            cameraDescription: listCameras[indexCameraDescription],
+            captureType: captureType,
+          ),
+        ),
+      );
     } else if (cameraPermissionStatus == PermissionStatus.permanentlyDenied) {
       if (!context.mounted) return;
       await showDeniedCameraPermissionDialog(context);
     }
-
-    // if (isDocument) {
-    //   // TODO: Abrir câmera para fotografar documento
-    // } else {
-    //   // TODO: Abrir câmera para fotografar selfie
-    // }
   }
 }

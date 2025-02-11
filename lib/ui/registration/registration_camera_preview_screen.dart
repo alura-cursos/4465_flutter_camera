@@ -1,12 +1,15 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_banco_douro/utils/registration_capture_types.dart';
 
 class RegistrationCameraPreviewScreen extends StatefulWidget {
   final CameraDescription cameraDescription;
+  final RegistrationCaptureTypes captureType;
   const RegistrationCameraPreviewScreen({
     super.key,
     required this.cameraDescription,
+    required this.captureType,
   });
 
   @override
