@@ -39,6 +39,7 @@ class BancoDouroApp extends StatelessWidget {
       ],
       child: MaterialApp(
         theme: appThemeLight,
+        debugShowCheckedModeBanner: false,
         routes: {
           "login": (context) => const LoginScreen(),
           "registration": (context) => const RegistrationScreen(),

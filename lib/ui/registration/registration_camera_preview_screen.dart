@@ -32,6 +32,15 @@ class _RegistrationCameraPreviewScreenState
   }
 
   @override
+  void dispose() {
+    if (cameraController != null) {
+      cameraController!.dispose();
+      cameraController = null;
+    }
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: _isSelfie ? Colors.white : Colors.black,
