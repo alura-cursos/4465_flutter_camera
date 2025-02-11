@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_banco_douro/ui/registration/registration_camera_preview_screen.dart';
@@ -213,7 +215,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         );
       }
 
-      Navigator.push(
+      Uint8List? resultImage = await Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => RegistrationCameraPreviewScreen(
@@ -222,6 +224,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           ),
         ),
       );
+      if (resultImage != null) {
+        if (isDocument) {
+          viewModel.saveDocumentImage(resultImage);
+        } else {
+          viewModel.saveSelfieImage(resultImage);
+        }
+      }
     } else if (cameraPermissionStatus == PermissionStatus.permanentlyDenied) {
       if (!context.mounted) return;
       await showDeniedCameraPermissionDialog(context);

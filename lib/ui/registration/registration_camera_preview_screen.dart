@@ -189,11 +189,16 @@ class _RegistrationCameraPreviewScreenState
       }
 
       if (!mounted) return;
-      showImagePreviewDialog(
+      bool? result = await showImagePreviewDialog(
         context,
         snapshotBytes,
         needConfirmation: true,
       );
+
+      if (result != null && result) {
+        if (!mounted) return;
+        Navigator.pop(context, snapshotBytes);
+      }
     }
   }
 }
