@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_banco_douro/ui/_core/themes/themes.dart';
 import 'package:flutter_banco_douro/ui/registration/registration_screen.dart';
 import 'package:provider/provider.dart';
@@ -10,7 +11,13 @@ import 'ui/home/home_screen.dart';
 import 'ui/login/login_screen.dart';
 import 'ui/registration/view_model/registration_viewmodel.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+  ]);
+
   runApp(const BancoDouroApp());
 }
 
