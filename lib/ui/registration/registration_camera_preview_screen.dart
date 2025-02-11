@@ -34,7 +34,13 @@ class _RegistrationCameraPreviewScreenState
                   cameraController!.value.isInitialized)
               ? AspectRatio(
                   aspectRatio: 1 / cameraController!.value.aspectRatio,
-                  child: CameraPreview(cameraController!),
+                  child: CameraPreview(
+                    cameraController!,
+                    child: Image.asset(
+                      "assets/images/guides/guide_selfie.png",
+                      fit: BoxFit.fill,
+                    ),
+                  ),
                 )
               : const CircularProgressIndicator(),
         ),
