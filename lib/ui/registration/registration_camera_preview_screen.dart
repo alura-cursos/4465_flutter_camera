@@ -3,7 +3,9 @@ import 'dart:math';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_banco_douro/ui/registration/widgets/image_preview_dialog.dart';
 import 'package:flutter_banco_douro/utils/registration_capture_types.dart';
+import 'package:image/image.dart' as img;
 
 class RegistrationCameraPreviewScreen extends StatefulWidget {
   final CameraDescription cameraDescription;
@@ -162,5 +164,27 @@ class _RegistrationCameraPreviewScreenState
     setState(() {});
   }
 
-  _onCaptureButtonClicked() async {}
+  _onCaptureButtonClicked() async {
+    if (cameraController != null) {
+      XFile snapshotFile = await cameraController!.takePicture();
+      Uint8List snapshotBytes = await snapshotFile.readAsBytes();
+
+      img.Image? image = img.decodeImage(snapshotBytes);
+
+      if (image != null) {
+        image = img.copyRotate(
+          image,
+          angle: widget.cameraDescription.sensorOrientation,
+        );
+        snapshotBytes = img.encodeJpg(image);
+      }
+
+      if (!mounted) return;
+      showImagePreviewDialog(
+        context,
+        snapshotBytes,
+        needConfirmation: true,
+      );
+    }
+  }
 }
