@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -30,7 +32,7 @@ class _RegistrationCameraPreviewScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: _isSelfie ? Colors.white : Colors.black,
       body: Center(
         child: AnimatedSwitcher(
           duration: const Duration(milliseconds: 750),
@@ -43,39 +45,65 @@ class _RegistrationCameraPreviewScreenState
                     child: Stack(
                       children: [
                         Image.asset(
-                          "assets/images/guides/guide_selfie.png",
+                          _getImageByType,
                           fit: BoxFit.fill,
                         ),
-                        const Align(
-                          alignment: Alignment.topCenter,
-                          child: Padding(
-                            padding: EdgeInsets.only(top: 32),
-                            child: Text(
-                              "Alinhe o rosto com o guia\ne olhe pra câmera",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
+                        Visibility(
+                          visible: _isSelfie,
+                          child: const Align(
+                            alignment: Alignment.topCenter,
+                            child: Padding(
+                              padding: EdgeInsets.only(top: 32),
+                              child: Text(
+                                "Alinhe o rosto com o guia\ne olhe pra câmera",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                           ),
                         ),
-                        Align(
-                          alignment: Alignment.bottomCenter,
-                          child: Padding(
-                            padding: const EdgeInsets.only(bottom: 32),
-                            child: IconButton(
-                              onPressed: () => _onCaptureButtonClicked(),
-                              iconSize: 48,
-                              icon: const Icon(Icons.camera_alt),
+                        Visibility(
+                          visible: _isSelfie,
+                          child: Align(
+                            alignment: Alignment.bottomCenter,
+                            child: Padding(
+                              padding: const EdgeInsets.only(bottom: 32),
+                              child: IconButton(
+                                onPressed: () => _onCaptureButtonClicked(),
+                                iconSize: 48,
+                                icon: const Icon(Icons.camera_alt),
+                              ),
                             ),
                           ),
                         ),
-                        const Align(
-                          alignment: Alignment.bottomCenter,
-                          child: Padding(
-                            padding: EdgeInsets.only(bottom: 16),
-                            child: Text("Clique para capturar"),
+                        Visibility(
+                          visible: _isSelfie,
+                          child: const Align(
+                            alignment: Alignment.bottomCenter,
+                            child: Padding(
+                              padding: EdgeInsets.only(bottom: 16),
+                              child: Text("Clique para capturar"),
+                            ),
+                          ),
+                        ),
+                        Visibility(
+                          visible: !_isSelfie,
+                          child: Align(
+                            alignment: Alignment.bottomCenter,
+                            child: Padding(
+                              padding: const EdgeInsets.only(bottom: 16.0),
+                              child: Transform.rotate(
+                                angle: pi / 2,
+                                child: IconButton.filled(
+                                  onPressed: () => _onCaptureButtonClicked(),
+                                  iconSize: 48,
+                                  icon: const Icon(Icons.camera_alt),
+                                ),
+                              ),
+                            ),
                           ),
                         )
                       ],
@@ -86,6 +114,22 @@ class _RegistrationCameraPreviewScreenState
         ),
       ),
     );
+  }
+
+  String get _getImageByType {
+    switch (widget.captureType) {
+      case RegistrationCaptureTypes.selfie:
+        return "assets/images/guides/guide_selfie.png";
+      case RegistrationCaptureTypes.cnh:
+        return "assets/images/guides/guide_cnh.png";
+      case RegistrationCaptureTypes.rg:
+        // TODO: Handle this case.
+        throw UnimplementedError();
+    }
+  }
+
+  bool get _isSelfie {
+    return widget.captureType == RegistrationCaptureTypes.selfie;
   }
 
   Future<void> _initializeCamera() async {
