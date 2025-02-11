@@ -27,6 +27,7 @@ class _RegistrationCameraPreviewScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Center(
         child: AnimatedSwitcher(
           duration: const Duration(milliseconds: 750),
@@ -36,9 +37,45 @@ class _RegistrationCameraPreviewScreenState
                   aspectRatio: 1 / cameraController!.value.aspectRatio,
                   child: CameraPreview(
                     cameraController!,
-                    child: Image.asset(
-                      "assets/images/guides/guide_selfie.png",
-                      fit: BoxFit.fill,
+                    child: Stack(
+                      children: [
+                        Image.asset(
+                          "assets/images/guides/guide_selfie.png",
+                          fit: BoxFit.fill,
+                        ),
+                        const Align(
+                          alignment: Alignment.topCenter,
+                          child: Padding(
+                            padding: EdgeInsets.only(top: 32),
+                            child: Text(
+                              "Alinhe o rosto com o guia\ne olhe pra câmera",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Align(
+                          alignment: Alignment.bottomCenter,
+                          child: Padding(
+                            padding: const EdgeInsets.only(bottom: 32),
+                            child: IconButton(
+                              onPressed: () => _onCaptureButtonClicked(),
+                              iconSize: 48,
+                              icon: const Icon(Icons.camera_alt),
+                            ),
+                          ),
+                        ),
+                        const Align(
+                          alignment: Alignment.bottomCenter,
+                          child: Padding(
+                            padding: EdgeInsets.only(bottom: 16),
+                            child: Text("Clique para capturar"),
+                          ),
+                        )
+                      ],
                     ),
                   ),
                 )
@@ -77,4 +114,6 @@ class _RegistrationCameraPreviewScreenState
 
     setState(() {});
   }
+
+  _onCaptureButtonClicked() async {}
 }
